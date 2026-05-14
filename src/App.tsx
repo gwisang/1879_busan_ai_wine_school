@@ -60,12 +60,58 @@ const COURSES: CourseDetail[] = [
   { title: 'Golf-Master', shortDesc: '성공적인 비즈니스를 위한 프리미엄 골프 레슨 및 와인 네트워크 융합 과정 (운영 중)' },
 ];
 
+const NOTICES = [
+  {
+    id: 1,
+    title: '[안내] 1879 부산 AI 와인스쿨 2026년도 상반기 원우 모집',
+    date: '2026. 05. 10',
+    content: '1879 부산 AI 와인스쿨에서 2026년도 상반기 신규 원우를 모집합니다. 최고 경영자와 전문가를 위한 맞춤형 과정에 많은 관심 부탁드립니다.\n\n- 접수 기간: 2026. 05. 10 ~ 2026. 05. 31\n- 지원 방법: 홈페이지 [지원하기] 버튼 또는 하단 상담 신청 이용'
+  },
+  {
+    id: 2,
+    title: '[공지] CEO-MASTER 과정 수강료 할인 프로모션 안내',
+    date: '2026. 05. 01',
+    content: 'CEO-BUSINESS 과정 수료 후 CEO-MASTER 과정 등록 시, 수강료의 특별 할인을 제공하는 프로모션을 진행하고 있습니다.\n심화된 와인 테이스팅과 글로벌 네트워크 구축에 함께하세요.'
+  },
+  {
+    id: 3,
+    title: '[행사] 동문 네트워킹 와인 디너 파티 개최 안내',
+    date: '2026. 04. 15',
+    content: '재학생 및 졸업생 동문 여러분을 모시고 "프리미엄 와인 디너 파티"를 개최합니다.\n다양한 빈티지 와인과 함께 비즈니스 네트워킹을 다지는 귀중한 시간이 되길 바랍니다.\n\n- 일시: 2026. 06. 10(금) 19:00\n- 장소: 1879 부산와인스쿨 1층 연회장'
+  }
+];
+
 const heroBg = '/@fs/Users/gwuisang/.gemini/antigravity/brain/a240cd33-0536-4d81-865b-556957506c87/hero_wine_background_1778668338727.png';
 
 function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'adminLogin' | 'adminDashboard'>('landing');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<CourseDetail | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('home');
+  const [expandedNotice, setExpandedNotice] = useState<number | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (currentView !== 'landing') return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    const sections = ['home', 'about', 'programs', 'notice'];
+    setTimeout(() => {
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+      });
+    }, 100);
+
+    return () => observer.disconnect();
+  }, [currentView]);
 
   // Application Form State
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', course: '', message: '' });
@@ -98,63 +144,108 @@ function App() {
   return (
     <div className={css({ minH: '100vh', bg: 'charcoal.900', color: 'white', fontFamily: 'body' })}>
       {/* Navigation */}
-      <nav className={css({ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 6, bg: 'rgba(15, 15, 19, 0.8)', backdropFilter: 'blur(10px)', borderBottom: '1px solid', borderColor: 'charcoal.700' })}>
+      <nav className={css({ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: { base: 4, md: 6 }, py: { base: 4, md: 6 }, bg: 'rgba(15, 15, 19, 0.8)', backdropFilter: 'blur(10px)', borderBottom: '1px solid', borderColor: 'charcoal.700' })}>
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className={css({ fontSize: 'xl', fontWeight: 'bold', letterSpacing: 'wider', color: 'gold.500', bg: 'transparent', border: 'none', cursor: 'pointer', p: 0 })}>
+          className={css({ fontSize: { base: 'md', md: 'xl' }, fontWeight: 'bold', letterSpacing: 'wider', color: 'gold.500', bg: 'transparent', border: 'none', cursor: 'pointer', p: 0, textAlign: 'left' })}>
           1879 BUSAN AI•WINE SCHOOL
         </button>
-        <div className={css({ display: 'flex', gap: 6, fontSize: 'sm', fontWeight: 'medium', color: 'gray.300' })}>
-          <a href="#" className={css({ _hover: { color: 'gold.400' }, transition: 'colors' })}>스쿨소개</a>
-          <button onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', color: 'gray.300', fontSize: 'inherit', fontWeight: 'inherit', p: 0, _hover: { color: 'gold.400' }, transition: 'colors' })}>프로그램</button>
-          <a href="#" className={css({ _hover: { color: 'gold.400' }, transition: 'colors' })}>공지사항</a>
+        <div className={css({ display: { base: 'none', md: 'flex' }, gap: 8, fontSize: 'md', fontWeight: 'bold', alignItems: 'center' })}>
+          <button onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontWeight: 'inherit', p: 0, transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', color: activeSection === 'about' ? 'gold.400' : 'gray.300', textShadow: activeSection === 'about' ? '0 0 15px rgba(212, 175, 55, 0.6)' : 'none', transform: activeSection === 'about' ? 'scale(1.15)' : 'scale(1)', _hover: { color: 'gold.400' } })}>스쿨소개</button>
+          <button onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontWeight: 'inherit', p: 0, transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', color: activeSection === 'programs' ? 'gold.400' : 'gray.300', textShadow: activeSection === 'programs' ? '0 0 15px rgba(212, 175, 55, 0.6)' : 'none', transform: activeSection === 'programs' ? 'scale(1.15)' : 'scale(1)', _hover: { color: 'gold.400' } })}>프로그램</button>
+          <button onClick={() => document.getElementById('notice')?.scrollIntoView({ behavior: 'smooth' })} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontWeight: 'inherit', p: 0, transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', color: activeSection === 'notice' ? 'gold.400' : 'gray.300', textShadow: activeSection === 'notice' ? '0 0 15px rgba(212, 175, 55, 0.6)' : 'none', transform: activeSection === 'notice' ? 'scale(1.15)' : 'scale(1)', _hover: { color: 'gold.400' } })}>공지사항</button>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className={css({ px: 5, py: 2, bg: 'wine.600', color: 'white', rounded: 'full', fontSize: 'sm', fontWeight: 'bold', _hover: { bg: 'wine.500' }, transition: 'colors', cursor: 'pointer' })}>
-          지원하기
-        </button>
+        <div className={css({ display: 'flex', alignItems: 'center', gap: 3 })}>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className={css({ px: { base: 3, md: 5 }, py: { base: 1.5, md: 2 }, bg: 'wine.600', color: 'white', rounded: 'full', fontSize: { base: 'xs', md: 'sm' }, fontWeight: 'bold', _hover: { bg: 'wine.500' }, transition: 'colors', cursor: 'pointer', whiteSpace: 'nowrap' })}>
+            지원하기
+          </button>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={css({ display: { base: 'block', md: 'none' }, bg: 'transparent', border: 'none', color: 'gold.500', fontSize: 'xl', cursor: 'pointer', p: 1, _hover: { color: 'gold.400' } })}>
+            {isMobileMenuOpen ? '✕' : '☰'}
+          </button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className={css({ position: 'absolute', top: '100%', left: 0, right: 0, bg: 'rgba(15, 15, 19, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid', borderColor: 'charcoal.700', display: { base: 'flex', md: 'none' }, flexDir: 'column', alignItems: 'center', py: 8, gap: 8, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' })}>
+            <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'lg', fontWeight: 'bold', p: 0, transition: 'all 0.3s ease', color: activeSection === 'about' ? 'gold.400' : 'gray.300', textShadow: activeSection === 'about' ? '0 0 15px rgba(212, 175, 55, 0.6)' : 'none' })}>스쿨소개</button>
+            <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' }); }} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'lg', fontWeight: 'bold', p: 0, transition: 'all 0.3s ease', color: activeSection === 'programs' ? 'gold.400' : 'gray.300', textShadow: activeSection === 'programs' ? '0 0 15px rgba(212, 175, 55, 0.6)' : 'none' })}>프로그램</button>
+            <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('notice')?.scrollIntoView({ behavior: 'smooth' }); }} className={css({ bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'lg', fontWeight: 'bold', p: 0, transition: 'all 0.3s ease', color: activeSection === 'notice' ? 'gold.400' : 'gray.300', textShadow: activeSection === 'notice' ? '0 0 15px rgba(212, 175, 55, 0.6)' : 'none' })}>공지사항</button>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
-      <header className={css({ position: 'relative', h: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' })}>
+      <header id="home" className={css({ position: 'relative', h: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' })}>
         <div className={css({ position: 'absolute', inset: 0, backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.5 })} />
         <div className={css({ position: 'absolute', inset: 0, bgGradient: 'to-b', gradientFrom: 'transparent', gradientTo: 'charcoal.900' })} />
 
         <div className={css({ position: 'relative', zIndex: 10, textAlign: 'center', px: 4, animation: 'float 6s ease-in-out infinite' })}>
-          <h2 className={css({ fontSize: 'xl', color: 'gold.400', mb: 4, letterSpacing: 'widest', textTransform: 'uppercase' })}>
+          <h2 className={css({ fontSize: { base: 'sm', md: 'xl' }, color: 'gold.400', mb: { base: 2, md: 4 }, letterSpacing: 'widest', textTransform: 'uppercase' })}>
             리더를 위한 가장 완벽한 와인 네트워크
           </h2>
-          <h1 className={css({ fontSize: '6xl', fontWeight: 'extrabold', mb: 6, lineHeight: 'tight', color: 'white' })}>
+          <h1 className={css({ fontSize: { base: '4xl', md: '6xl' }, fontWeight: 'extrabold', mb: { base: 4, md: 6 }, lineHeight: 'tight', color: 'white', wordBreak: 'keep-all' })}>
             1879 부산 <span className={css({ color: 'wine.500', textShadow: '0 0 20px rgba(206, 74, 94, 0.5)' })}>AI</span> 와인 스쿨
           </h1>
-          <p className={css({ fontSize: 'xl', color: 'gray.300', mb: 10, maxW: '2xl', mx: 'auto' })}>
+          <p className={css({ fontSize: { base: 'md', md: 'xl' }, color: 'gray.300', mb: { base: 8, md: 10 }, maxW: '2xl', mx: 'auto', wordBreak: 'keep-all' })}>
             최첨단 AI 기술과 정통 와인의 만남. <br />
             당신의 품격을 한 차원 높여줄 특별한 경험이 시작됩니다.
           </p>
-          <div className={css({ display: 'flex', justifyContent: 'center', gap: 4 })}>
+          <div className={css({ display: 'flex', flexDir: { base: 'column', sm: 'row' }, justifyContent: 'center', gap: 4 })}>
             <button
               onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
-              className={css({ px: 8, py: 4, bg: 'gold.500', color: 'charcoal.900', rounded: 'full', fontSize: 'lg', fontWeight: 'bold', _hover: { bg: 'gold.400', transform: 'scale(1.05)' }, transition: 'all', cursor: 'pointer', boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)' })}>
+              className={css({ px: { base: 6, md: 8 }, py: { base: 3, md: 4 }, bg: 'gold.500', color: 'charcoal.900', rounded: 'full', fontSize: { base: 'md', md: 'lg' }, fontWeight: 'bold', _hover: { bg: 'gold.400', transform: 'scale(1.05)' }, transition: 'all', cursor: 'pointer', boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)', w: { base: 'full', sm: 'auto' } })}>
               CEO 과정 자세히 보기
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className={css({ px: 8, py: 4, bg: 'rgba(255, 255, 255, 0.1)', color: 'white', rounded: 'full', fontSize: 'lg', fontWeight: 'bold', backdropFilter: 'blur(10px)', border: '1px solid', borderColor: 'rgba(255,255,255,0.2)', _hover: { bg: 'rgba(255, 255, 255, 0.2)' }, transition: 'all', cursor: 'pointer' })}>
+              className={css({ px: { base: 6, md: 8 }, py: { base: 3, md: 4 }, bg: 'rgba(255, 255, 255, 0.1)', color: 'white', rounded: 'full', fontSize: { base: 'md', md: 'lg' }, fontWeight: 'bold', backdropFilter: 'blur(10px)', border: '1px solid', borderColor: 'rgba(255,255,255,0.2)', _hover: { bg: 'rgba(255, 255, 255, 0.2)' }, transition: 'all', cursor: 'pointer', w: { base: 'full', sm: 'auto' } })}>
               상담 신청
             </button>
           </div>
         </div>
       </header>
 
+      {/* About Section */}
+      <section id="about" className={css({ py: { base: 16, md: 24 }, px: { base: 4, md: 6 }, maxW: '4xl', mx: 'auto', textAlign: 'center', lineHeight: 'loose', color: 'gray.300', fontSize: { base: 'md', md: 'lg' }, wordBreak: 'keep-all' })}>
+        <h3 className={css({ fontSize: { base: '2xl', md: '3xl' }, fontWeight: 'bold', color: 'gold.500', mb: { base: 8, md: 12 } })}>About 1879 부산와인스쿨</h3>
+        <p className={css({ mb: 6 })}>
+          <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>부산와인스쿨</span>은 부산,경남지역의 와인문화 선도를 위해<br className={css({ display: { base: 'none', md: 'block' } })} />
+          2006년 11월11일 개원한 부산 최초의 사설와인&nbsp;교육기관입니다.
+        </p>
+        <p className={css({ mb: 6 })}>
+          부산와인스쿨의 교육 프로그램은 지난 18년간 <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>최고 수준의 프로그램</span>임을<br className={css({ display: { base: 'none', md: 'block' } })} />
+          보여주었고, 와인교육의 글로벌화를 추진해 오던 중 세계적 권위의<br className={css({ display: { base: 'none', md: 'block' } })} />
+          프랑스 와인 전문대학 'Universite du Vin'과의 국제학술협력으로<br className={css({ display: { base: 'none', md: 'block' } })} />
+          새로운 도약의 발판을 마련하여 <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>국내의 와인발전과 와인산업의 리더</span>로<br className={css({ display: { base: 'none', md: 'block' } })} />
+          우뚝 서게&nbsp;되었습니다.
+        </p>
+        <p className={css({ mb: 6 })}>
+          이와 함께 CEO-BUSINESS 과정 1300여명 원우들의 <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>탄탄한 비즈니스<br className={css({ display: { base: 'none', md: 'block' } })} />
+            네트워킹</span>을 바탕으로 명실상부한 부산 최고의 와인스쿨로 자리매김 해오고&nbsp;있습니다.
+        </p>
+        <p className={css({ mb: 6 })}>
+          부산와인스쿨에서는 최신 트렌드의 글로벌 와인문화와 지식과 함께<br className={css({ display: { base: 'none', md: 'block' } })} />
+          정규과정 외 다양한 활동을 통한 교류기회를 제공함으로써 비즈니스에서도<br className={css({ display: { base: 'none', md: 'block' } })} />
+          <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>수준 높은 인적 네트워크</span>를 통한 폭넓은 커뮤니티의 장이 될 것으로&nbsp;기대합니다.
+        </p>
+        <p>
+          앞으로도 부산와인스쿨은 여러분들이 와인을 통해 삶의 질을 높이고<br className={css({ display: { base: 'none', md: 'block' } })} />
+          큰 인적 네트워크로 성장해 가기를 진심으로&nbsp;기원합니다.
+        </p>
+      </section>
+
       {/* Programs Section */}
-      <section id="programs" className={css({ py: 24, px: 6, maxW: '7xl', mx: 'auto' })}>
-        <div className={css({ textAlign: 'center', mb: 16 })}>
-          <h3 className={css({ fontSize: '3xl', fontWeight: 'bold', color: 'gold.500', mb: 4 })}>Premium Programs</h3>
-          <p className={css({ color: 'gray.400' })}>최고 경영자와 전문가를 위한 맞춤형 교육 과정</p>
+      <section id="programs" className={css({ py: { base: 16, md: 24 }, px: { base: 4, md: 6 }, maxW: '7xl', mx: 'auto' })}>
+        <div className={css({ textAlign: 'center', mb: { base: 10, md: 16 } })}>
+          <h3 className={css({ fontSize: { base: '2xl', md: '3xl' }, fontWeight: 'bold', color: 'gold.500', mb: { base: 2, md: 4 } })}>Premium Programs</h3>
+          <p className={css({ color: 'gray.400', fontSize: { base: 'sm', md: 'md' }, wordBreak: 'keep-all' })}>최고 경영자와 전문가를 위한 맞춤형 교육 과정</p>
         </div>
 
-        <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 8 })}>
+        <div className={css({ display: 'grid', gridTemplateColumns: { base: '1fr', md: 'repeat(auto-fit, minmax(300px, 1fr))' }, gap: { base: 6, md: 8 } })}>
           {COURSES.map((prog, idx) => (
             <div key={idx}
               onClick={() => {
@@ -174,9 +265,6 @@ function App() {
                 display: 'flex',
                 flexDir: 'column'
               })}>
-              <div className={css({ w: 12, h: 12, bg: 'wine.900', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 6, color: 'gold.500', fontSize: 'xl', fontWeight: 'bold' })}>
-                {idx + 1}
-              </div>
               <h4 className={css({ fontSize: 'xl', fontWeight: 'bold', mb: 3 })}>{prog.title}</h4>
               <p className={css({ color: 'gray.400', lineHeight: 'relaxed', flexGrow: 1 })}>{prog.shortDesc}</p>
 
@@ -201,15 +289,44 @@ function App() {
         </div>
       </section>
 
+      {/* Notice Section */}
+      <section id="notice" className={css({ py: { base: 16, md: 24 }, px: { base: 4, md: 6 }, maxW: '4xl', mx: 'auto' })}>
+        <div className={css({ textAlign: 'center', mb: { base: 10, md: 16 } })}>
+          <h3 className={css({ fontSize: { base: '2xl', md: '3xl' }, fontWeight: 'bold', color: 'gold.500', mb: { base: 2, md: 4 } })}>Notice & News</h3>
+          <p className={css({ color: 'gray.400', fontSize: { base: 'sm', md: 'md' }, wordBreak: 'keep-all' })}>부산와인스쿨의 주요 공지와 소식을 확인하세요</p>
+        </div>
+
+        <div className={css({ display: 'flex', flexDir: 'column', gap: 4 })}>
+          {NOTICES.map(notice => (
+            <div key={notice.id} className={css({ bg: 'charcoal.800', rounded: 'xl', border: '1px solid', borderColor: 'charcoal.700', overflow: 'hidden', transition: 'all 0.3s ease' })}>
+              <button
+                onClick={() => setExpandedNotice(expandedNotice === notice.id ? null : notice.id)}
+                className={css({ w: 'full', textAlign: 'left', p: { base: 5, md: 6 }, bg: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white', _hover: { bg: 'charcoal.700' } })}>
+                <div className={css({ display: 'flex', flexDir: 'column', gap: 2 })}>
+                  <span className={css({ fontSize: { base: 'md', md: 'lg' }, fontWeight: 'bold' })}>{notice.title}</span>
+                  <span className={css({ fontSize: 'sm', color: 'gold.500' })}>{notice.date}</span>
+                </div>
+                <span className={css({ color: 'gray.400', fontSize: 'xl', transform: expandedNotice === notice.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' })}>▼</span>
+              </button>
+              {expandedNotice === notice.id && (
+                <div className={css({ p: { base: 5, md: 6 }, pt: 0, color: 'gray.300', fontSize: { base: 'sm', md: 'md' }, lineHeight: 'relaxed', whiteSpace: 'pre-line', wordBreak: 'keep-all', borderTop: '1px solid', borderColor: 'charcoal.700', mt: 4 })}>
+                  {notice.content}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className={css({ py: 12, bg: 'charcoal.900', borderTop: '1px solid', borderColor: 'charcoal.800' })}>
-        <div className={css({ maxW: '7xl', mx: 'auto', px: 6, display: 'flex', flexDir: { base: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center', gap: 6 })}>
-          <div className={css({ color: 'gray.500', fontSize: 'sm' })}>
-            <p className={css({ fontWeight: 'bold', color: 'gray.300', mb: 2 })}>1879부산AI•와인스쿨</p>
-            <p>부산광역시 동래구 연안로 58번길 7,1~2층 / 사업자번호 644-88-00754</p>
+      <footer className={css({ py: { base: 8, md: 12 }, bg: 'charcoal.900', borderTop: '1px solid', borderColor: 'charcoal.800' })}>
+        <div className={css({ maxW: '7xl', mx: 'auto', px: { base: 4, md: 6 }, display: 'flex', flexDir: { base: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { base: 'flex-start', md: 'center' }, gap: 6 })}>
+          <div className={css({ color: 'gray.500', fontSize: { base: 'xs', md: 'sm' }, lineHeight: 'relaxed', wordBreak: 'keep-all' })}>
+            <p className={css({ fontWeight: 'bold', color: 'gray.300', mb: 2, fontSize: { base: 'sm', md: 'md' } })}>1879부산AI•와인스쿨</p>
+            <p>부산광역시 동래구 연안로 58번길 7, 1~2층 / 사업자번호 644-88-00754</p>
             <p>Tel: 1588-1879 | Email: info@busanwine.com</p>
           </div>
-          <div className={css({ display: 'flex', gap: 4 })}>
+          <div className={css({ display: 'flex', gap: 4, alignSelf: { base: 'flex-start', md: 'auto' } })}>
             <button
               onClick={() => setCurrentView('adminLogin')}
               className={css({ bg: 'transparent', border: 'none', color: 'charcoal.600', _hover: { color: 'gray.500' }, cursor: 'pointer', fontSize: 'xs' })}>
@@ -225,28 +342,28 @@ function App() {
       {/* Course Detail Modal */}
       {selectedCourse && (
         <div className={css({ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', bg: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(5px)', p: 4 })}>
-          <div className={css({ bg: 'charcoal.800', p: 8, rounded: '2xl', maxW: '2xl', w: 'full', border: '1px solid', borderColor: 'charcoal.700', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', maxH: '90vh', overflowY: 'auto' })}>
-            <div className={css({ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 6 })}>
+          <div className={css({ bg: 'charcoal.800', p: { base: 5, md: 8 }, rounded: '2xl', maxW: '2xl', w: 'full', border: '1px solid', borderColor: 'charcoal.700', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', maxH: '90vh', overflowY: 'auto' })}>
+            <div className={css({ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: { base: 4, md: 6 } })}>
               <div>
-                <h3 className={css({ fontSize: '3xl', fontWeight: 'bold', color: 'gold.500', mb: 2 })}>{selectedCourse.title}</h3>
-                <p className={css({ color: 'gray.400', fontSize: 'lg' })}>{selectedCourse.shortDesc}</p>
+                <h3 className={css({ fontSize: { base: 'xl', md: '3xl' }, fontWeight: 'bold', color: 'gold.500', mb: 2, wordBreak: 'keep-all' })}>{selectedCourse.title}</h3>
+                <p className={css({ color: 'gray.400', fontSize: { base: 'sm', md: 'lg' }, wordBreak: 'keep-all' })}>{selectedCourse.shortDesc}</p>
               </div>
-              <button onClick={() => setSelectedCourse(null)} className={css({ color: 'gray.400', _hover: { color: 'white' }, bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: '2xl', ml: 4 })}>
+              <button onClick={() => setSelectedCourse(null)} className={css({ color: 'gray.400', _hover: { color: 'white' }, bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: { base: 'xl', md: '2xl' }, ml: 2 })}>
                 ✕
               </button>
             </div>
 
-            <div className={css({ color: 'gray.300', lineHeight: 'relaxed', mb: 8, whiteSpace: 'pre-line' })}>
+            <div className={css({ color: 'gray.300', fontSize: { base: 'sm', md: 'md' }, lineHeight: 'relaxed', mb: { base: 6, md: 8 }, whiteSpace: 'pre-line', wordBreak: 'keep-all' })}>
               {selectedCourse.description}
             </div>
 
             {selectedCourse.details && (
-              <div className={css({ bg: 'charcoal.900', p: 6, rounded: 'xl', mb: 8 })}>
-                <ul className={css({ display: 'flex', flexDir: 'column', gap: 4 })}>
+              <div className={css({ bg: 'charcoal.900', p: { base: 4, md: 6 }, rounded: 'xl', mb: { base: 6, md: 8 } })}>
+                <ul className={css({ display: 'flex', flexDir: 'column', gap: { base: 3, md: 4 } })}>
                   {selectedCourse.details.map((detail, idx) => (
-                    <li key={idx} className={css({ display: 'flex', flexDir: { base: 'column', sm: 'row' }, gap: { base: 1, sm: 4 }, borderBottom: idx !== selectedCourse.details!.length - 1 ? '1px solid' : 'none', borderColor: 'charcoal.800', pb: idx !== selectedCourse.details!.length - 1 ? 4 : 0 })}>
+                    <li key={idx} className={css({ display: 'flex', flexDir: { base: 'column', sm: 'row' }, gap: { base: 1, sm: 4 }, borderBottom: idx !== selectedCourse.details!.length - 1 ? '1px solid' : 'none', borderColor: 'charcoal.800', pb: idx !== selectedCourse.details!.length - 1 ? { base: 3, md: 4 } : 0, fontSize: { base: 'sm', md: 'md' } })}>
                       <span className={css({ color: 'gold.500', fontWeight: 'bold', minW: '100px' })}>{detail.label}</span>
-                      <span className={css({ color: 'gray.300' })}>{detail.value}</span>
+                      <span className={css({ color: 'gray.300', wordBreak: 'keep-all' })}>{detail.value}</span>
                     </li>
                   ))}
                 </ul>
@@ -260,7 +377,7 @@ function App() {
                   setSelectedCourse(null);
                   setIsModalOpen(true);
                 }}
-                className={css({ px: 8, py: 4, bg: 'wine.600', color: 'white', rounded: 'full', fontSize: 'lg', fontWeight: 'bold', _hover: { bg: 'wine.500', transform: 'scale(1.05)' }, transition: 'all', cursor: 'pointer', boxShadow: '0 0 20px rgba(206, 74, 94, 0.4)' })}>
+                className={css({ px: { base: 6, md: 8 }, py: { base: 3, md: 4 }, bg: 'wine.600', color: 'white', rounded: 'full', fontSize: { base: 'md', md: 'lg' }, fontWeight: 'bold', _hover: { bg: 'wine.500', transform: 'scale(1.05)' }, transition: 'all', cursor: 'pointer', boxShadow: '0 0 20px rgba(206, 74, 94, 0.4)', w: { base: 'full', sm: 'auto' } })}>
                 이 과정 상담 신청하기
               </button>
             </div>
@@ -271,26 +388,26 @@ function App() {
       {/* Application Modal */}
       {isModalOpen && (
         <div className={css({ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', bg: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(5px)', p: 4 })}>
-          <div className={css({ bg: 'charcoal.800', p: 8, rounded: '2xl', maxW: 'md', w: 'full', border: '1px solid', borderColor: 'charcoal.700', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' })}>
-            <div className={css({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 6 })}>
-              <h3 className={css({ fontSize: '2xl', fontWeight: 'bold', color: 'gold.500' })}>상담 신청하기</h3>
+          <div className={css({ bg: 'charcoal.800', p: { base: 6, md: 8 }, rounded: '2xl', maxW: 'md', w: 'full', border: '1px solid', borderColor: 'charcoal.700', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', maxH: '90vh', overflowY: 'auto' })}>
+            <div className={css({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: { base: 4, md: 6 } })}>
+              <h3 className={css({ fontSize: { base: 'xl', md: '2xl' }, fontWeight: 'bold', color: 'gold.500' })}>상담 신청하기</h3>
               <button onClick={() => setIsModalOpen(false)} className={css({ color: 'gray.400', _hover: { color: 'white' }, bg: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'xl' })}>
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleFormSubmit} className={css({ display: 'flex', flexDir: 'column', gap: 4 })}>
+            <form onSubmit={handleFormSubmit} className={css({ display: 'flex', flexDir: 'column', gap: { base: 3, md: 4 } })}>
               <div>
                 <label className={css({ display: 'block', mb: 1, fontSize: 'sm', color: 'gray.300' })}>이름</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={css({ w: 'full', p: 3, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })} placeholder="홍길동" />
+                <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={css({ w: 'full', p: { base: 2.5, md: 3 }, fontSize: { base: 'sm', md: 'md' }, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })} placeholder="홍길동" />
               </div>
               <div>
                 <label className={css({ display: 'block', mb: 1, fontSize: 'sm', color: 'gray.300' })}>연락처</label>
-                <input required type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className={css({ w: 'full', p: 3, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })} placeholder="010-1234-5678" />
+                <input required type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className={css({ w: 'full', p: { base: 2.5, md: 3 }, fontSize: { base: 'sm', md: 'md' }, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })} placeholder="010-1234-5678" />
               </div>
               <div>
                 <label className={css({ display: 'block', mb: 1, fontSize: 'sm', color: 'gray.300' })}>관심 과정</label>
-                <select value={formData.course} onChange={e => setFormData({ ...formData, course: e.target.value })} className={css({ w: 'full', p: 3, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })}>
+                <select value={formData.course} onChange={e => setFormData({ ...formData, course: e.target.value })} className={css({ w: 'full', p: { base: 2.5, md: 3 }, fontSize: { base: 'sm', md: 'md' }, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })}>
                   <option value="">선택해주세요</option>
                   {COURSES.map(course => (
                     <option key={course.title} value={course.title}>{course.title}</option>
@@ -299,9 +416,9 @@ function App() {
               </div>
               <div>
                 <label className={css({ display: 'block', mb: 1, fontSize: 'sm', color: 'gray.300' })}>남기실 메시지 (선택)</label>
-                <textarea rows={3} value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} className={css({ w: 'full', p: 3, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })} placeholder="문의하실 내용을 적어주세요." />
+                <textarea rows={3} value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} className={css({ w: 'full', p: { base: 2.5, md: 3 }, fontSize: { base: 'sm', md: 'md' }, bg: 'charcoal.900', border: '1px solid', borderColor: 'charcoal.600', rounded: 'lg', color: 'white', _focus: { outline: 'none', borderColor: 'gold.500' } })} placeholder="문의하실 내용을 적어주세요." />
               </div>
-              <button type="submit" className={css({ mt: 4, w: 'full', py: 4, bg: 'wine.600', color: 'white', rounded: 'lg', fontWeight: 'bold', _hover: { bg: 'wine.500' }, transition: 'colors', cursor: 'pointer' })}>
+              <button type="submit" className={css({ mt: { base: 2, md: 4 }, w: 'full', py: { base: 3, md: 4 }, bg: 'wine.600', color: 'white', rounded: 'lg', fontWeight: 'bold', fontSize: { base: 'md', md: 'lg' }, _hover: { bg: 'wine.500' }, transition: 'colors', cursor: 'pointer' })}>
                 신청 완료
               </button>
             </form>
