@@ -56,8 +56,27 @@ const COURSES: CourseDetail[] = [
       { label: '수강료', value: '89만원' }
     ]
   },
-  { title: 'AI-Workflow', shortDesc: '최신 AI 기술을 비즈니스 워크플로우에 접목하여 업무 효율을 극대화하는 실무 과정 (신규 개강)' },
-  { title: 'Golf-Master', shortDesc: '성공적인 비즈니스를 위한 프리미엄 골프 레슨 및 와인 네트워크 융합 과정 (운영 중)' },
+  {
+    title: 'AI-Workflow',
+    shortDesc: '최신 AI 기술을 비즈니스 워크플로우에 접목하여 업무 효율을 극대화하는 실무 과정 (신규 개강)',
+    description: '본 교육 과정은 생성형 AI를 처음 접하는 분들도 기초부터 차근차근 쉽게 배울 수 있는 실습형 수업으로 이루어져 있습니다. 구글 워크스페이스와 제미나이, 클로드를 활용한 업무 자동화부터 사내 문서를 기반으로 답변하는 똑똑한 사내 검색 시스템 구축, 그리고 업종별 인터넷 홈페이지 시안 제작까지 복잡한 실무 기술을 누구나 직관적으로 이해할 수 있도록 구성했습니다.\n\n인공지능 교육 전문가가 직접 기초부터 책임 지도하므로, AI가 낯선 초보자도 난이도 걱정 없이 완벽하게 마스터할 수 있습니다. 16주간의 과정을 통해 현업 전문가의 노하우를 전수받아 업무 능률을 혁신적으로 향상시키고, 팀별로 제작한 데이터 시스템과 시안들을 회사의 실제 자산으로 안전하게 인계하는 데 목적을 두고 있습니다.',
+    details: [
+      { label: '교육 기간', value: '4개월 16회 과정' },
+      { label: '모집 인원', value: '20명 (선착순 마감)' },
+      { label: '교육 시간', value: '17:00 ~ 19:00' },
+      { label: '수강료', value: '180만원(부산와인스쿨 수강생 및 동문 30만원 할인)' }
+    ]
+  },
+  {
+    title: 'Golf-Master',
+    shortDesc: '성공적인 비즈니스를 위한 프리미엄 골프 레슨 및 와인 네트워크 융합 과정 (운영 중)',
+    description: '1879 골프 마스터 과정은 KPGA 신용진 프로님 포함 전담 책임프로 시스템 관리 아래 인도어 연습장 맞춤형 레슨, 숏게임 집중 훈련, 실제 필드 라운딩까지 아우르는 철저한 실기 중심 커리큘럼으로 구성되어 있습니다. 교육 기간 중 골프 아카데미 내 무료 레슨을 진행해 주며 영상 분석으로 스윙을 바로 잡아줍니다.',
+    details: [
+      { label: '교육 기간', value: '3개월 13회 과정' },
+      { label: '교육 시간', value: '매주 화요일' },
+      { label: '수강료', value: '350만원' }
+    ]
+  }
 ];
 
 const NOTICES = [
@@ -211,13 +230,13 @@ function App() {
 
       {/* About Section */}
       <section id="about" className={css({ py: { base: 16, md: 24 }, px: { base: 4, md: 6 }, maxW: '4xl', mx: 'auto', textAlign: 'center', lineHeight: 'loose', color: 'gray.300', fontSize: { base: 'md', md: 'lg' }, wordBreak: 'keep-all' })}>
-        <h3 className={css({ fontSize: { base: '2xl', md: '3xl' }, fontWeight: 'bold', color: 'gold.500', mb: { base: 8, md: 12 } })}>About 1879 부산와인스쿨</h3>
+        <h3 className={css({ fontSize: { base: '2xl', md: '3xl' }, fontWeight: 'bold', color: 'gold.500', mb: { base: 8, md: 12 } })}>About 1879부산AI•와인스쿨</h3>
         <p className={css({ mb: 6 })}>
-          <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>부산와인스쿨</span>은 부산,경남지역의 와인문화 선도를 위해<br className={css({ display: { base: 'none', md: 'block' } })} />
+          <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>1879부산AI•와인스쿨</span>은 부산,경남지역의 와인문화 선도를 위해<br className={css({ display: { base: 'none', md: 'block' } })} />
           2006년 11월11일 개원한 부산 최초의 사설와인&nbsp;교육기관입니다.
         </p>
         <p className={css({ mb: 6 })}>
-          부산와인스쿨의 교육 프로그램은 지난 18년간 <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>최고 수준의 프로그램</span>임을<br className={css({ display: { base: 'none', md: 'block' } })} />
+          1879부산AI•와인스쿨의 교육 프로그램은 지난 18년간 <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>최고 수준의 프로그램</span>임을<br className={css({ display: { base: 'none', md: 'block' } })} />
           보여주었고, 와인교육의 글로벌화를 추진해 오던 중 세계적 권위의<br className={css({ display: { base: 'none', md: 'block' } })} />
           프랑스 와인 전문대학 'Universite du Vin'과의 국제학술협력으로<br className={css({ display: { base: 'none', md: 'block' } })} />
           새로운 도약의 발판을 마련하여 <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>국내의 와인발전과 와인산업의 리더</span>로<br className={css({ display: { base: 'none', md: 'block' } })} />
@@ -228,12 +247,12 @@ function App() {
             네트워킹</span>을 바탕으로 명실상부한 부산 최고의 와인스쿨로 자리매김 해오고&nbsp;있습니다.
         </p>
         <p className={css({ mb: 6 })}>
-          부산와인스쿨에서는 최신 트렌드의 글로벌 와인문화와 지식과 함께<br className={css({ display: { base: 'none', md: 'block' } })} />
+          1879부산AI•와인스쿨에서는 최신 트렌드의 글로벌 와인문화와 지식과 함께<br className={css({ display: { base: 'none', md: 'block' } })} />
           정규과정 외 다양한 활동을 통한 교류기회를 제공함으로써 비즈니스에서도<br className={css({ display: { base: 'none', md: 'block' } })} />
           <span className={css({ color: 'wine.400', fontWeight: 'bold' })}>수준 높은 인적 네트워크</span>를 통한 폭넓은 커뮤니티의 장이 될 것으로&nbsp;기대합니다.
         </p>
         <p>
-          앞으로도 부산와인스쿨은 여러분들이 와인을 통해 삶의 질을 높이고<br className={css({ display: { base: 'none', md: 'block' } })} />
+          앞으로도 1879부산AI•와인스쿨은 여러분들이 와인을 통해 삶의 질을 높이고<br className={css({ display: { base: 'none', md: 'block' } })} />
           큰 인적 네트워크로 성장해 가기를 진심으로&nbsp;기원합니다.
         </p>
       </section>
