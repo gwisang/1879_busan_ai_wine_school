@@ -100,7 +100,7 @@ const NOTICES = [
   }
 ];
 
-const heroBg = '/@fs/Users/gwuisang/.gemini/antigravity/brain/a240cd33-0536-4d81-865b-556957506c87/hero_wine_background_1778668338727.png';
+const heroBg = '/hero_wine_background.png';
 
 function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'adminLogin' | 'adminDashboard'>('landing');
